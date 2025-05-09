@@ -81,13 +81,25 @@ function App() {
 
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center hero-bg">
-          <div className="container mx-auto px-4 text-center hero-content">
+          {/* Enhanced background effect for both light and dark themes */}
+          <div className="absolute inset-0 overflow-hidden z-0">
+            <div className="absolute top-0 left-[10%] w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-[15%] w-96 h-96 bg-primary/25 rounded-full blur-3xl"></div>
+            <div className="absolute top-[30%] right-[5%] w-64 h-64 bg-secondary/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-[20%] left-[20%] w-80 h-80 bg-primary/15 rounded-full blur-3xl"></div>
+            
+            {/* Additional elements for more visual interest */}
+            <div className="absolute top-[50%] left-[40%] w-60 h-60 bg-accent/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-[15%] left-[30%] w-40 h-40 bg-secondary/15 rounded-full blur-2xl"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 text-center hero-content relative z-10">
             {/* Keep the logo in the hero section too */}
             <div className="flex justify-center mb-8">
               <img 
                 src={import.meta.env.BASE_URL + "logo.png"} 
                 alt="SoftSell Logo" 
-                className="h-48 w-auto" // Increased from h-32 to h-48
+                className="h-56 w-auto"
               />
             </div>
             
