@@ -60,7 +60,10 @@ function App() {
         {/* Navigation */}
         <nav className="py-4 px-6 shadow-sm bg-background/90 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto flex justify-between items-center">
-            <div className="text-2xl font-bold text-primary">SoftSell</div>
+            <div className="flex items-center">
+              {/* Add the text logo back */}
+              <div className="text-2xl font-bold text-primary">SoftSell</div>
+            </div>
             <div className="hidden md:flex space-x-6">
               <a href="#how-it-works" className="text-foreground hover:text-primary transition-colors">How it Works</a>
               <a href="#why-us" className="text-foreground hover:text-primary transition-colors">Why Choose Us</a>
@@ -79,6 +82,15 @@ function App() {
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center hero-bg">
           <div className="container mx-auto px-4 text-center hero-content">
+            {/* Keep the logo in the hero section too */}
+            <div className="flex justify-center mb-8">
+              <img 
+                src={import.meta.env.BASE_URL + "logo.png"} 
+                alt="SoftSell Logo" 
+                className="h-48 w-auto" // Increased from h-32 to h-48
+              />
+            </div>
+            
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Transform Your Software <span className="text-primary">Licenses</span> into Cash
             </h1>
@@ -360,7 +372,14 @@ function App() {
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-8">
               <div>
-                <h3 className="text-xl font-bold mb-4">SoftSell</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <img 
+                    src="/logo.png" 
+                    alt="SoftSell Logo" 
+                    className="h-8 mr-2 filter brightness-200" 
+                  />
+                  SoftSell
+                </h3>
                 <p className="text-background/80 mb-4">
                   The easiest way to sell your unused software licenses for the best value.
                 </p>
