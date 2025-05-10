@@ -172,6 +172,26 @@
   }
 }
 
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(20px);
@@ -193,4 +213,26 @@
 
 .chat-dialog {
   animation: slideUp 0.3s ease-out;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.5s ease-out 0.2s both;
+}
+
+.animate-checkmark {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark 0.8s ease-in-out 0.5s forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out 0.3s both;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.4s;
 }
