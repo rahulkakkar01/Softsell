@@ -18,6 +18,8 @@ function App() {
     message: ''
   })
 
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
   const handleSubmit = (e) => {
     e.preventDefault()
     // Frontend validation
@@ -30,6 +32,10 @@ function App() {
       return
     }
     console.log('Form submitted:', formData)
+    
+    // Set submitted state to true to show thank you message
+    setIsSubmitted(true)
+    
     // Reset form
     setFormData({
       name: '',
@@ -38,6 +44,11 @@ function App() {
       licenseType: '',
       message: ''
     })
+    
+    // Optionally reset the form back to normal after a few seconds
+    setTimeout(() => {
+      setIsSubmitted(false)
+    }, 5000)
   }
 
   const handleChange = (e) => {
@@ -307,73 +318,87 @@ function App() {
                 <CardDescription>Tell us about your software licenses and how we can help.</CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                {isSubmitted ? (
+                  <div className="py-8 text-center space-y-4 animate-fadeIn">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-scaleIn">
+                      <svg className="w-8 h-8 text-primary animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-primary animate-slideUp">Thank You!</h3>
+                    <p className="text-muted-foreground animate-slideUp animation-delay-100">
+                      We appreciate you connecting with us. Our team will get back to you within 24 hours.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label htmlFor="name" className="text-sm font-medium">Name</label>
+                        <Input
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="email" className="text-sm font-medium">Email</label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-2">
-                      <label htmlFor="name" className="text-sm font-medium">Name</label>
+                      <label htmlFor="company" className="text-sm font-medium">Company</label>
                       <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="company"
+                        name="company"
+                        value={formData.company}
                         onChange={handleChange}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">Email</label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
+                      <label htmlFor="licenseType" className="text-sm font-medium">License Type</label>
+                      <Select 
+                        value={formData.licenseType} 
+                        onValueChange={handleSelectChange}
+                        required
+                      >
+                        <SelectTrigger id="licenseType">
+                          <SelectValue placeholder="Select a license type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="microsoft">Microsoft</SelectItem>
+                          <SelectItem value="adobe">Adobe</SelectItem>
+                          <SelectItem value="autodesk">Autodesk</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="message" className="text-sm font-medium">Message</label>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
                         onChange={handleChange}
+                        rows="4"
                         required
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="company" className="text-sm font-medium">Company</label>
-                    <Input
-                      id="company"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="licenseType" className="text-sm font-medium">License Type</label>
-                    <Select 
-                      value={formData.licenseType} 
-                      onValueChange={handleSelectChange}
-                      required
-                    >
-                      <SelectTrigger id="licenseType">
-                        <SelectValue placeholder="Select a license type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="microsoft">Microsoft</SelectItem>
-                        <SelectItem value="adobe">Adobe</SelectItem>
-                        <SelectItem value="autodesk">Autodesk</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium">Message</label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows="4"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full submit-button">
-                    Submit
-                  </Button>
-                </form>
+                    <Button type="submit" className="w-full submit-button">
+                      Submit
+                    </Button>
+                  </form>
+                )}
               </CardContent>
             </Card>
           </div>
