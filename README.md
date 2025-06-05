@@ -29,23 +29,30 @@ A modern, responsive landing page for SoftSell - a platform that helps businesse
 
 ### Installation
 
-1. Clone the repository
-   bash
+1. **Clone the repository**
+
+   ```bash
    git clone https://github.com/rahulkakkar01/Softsell.git
    cd Softsell
-   
+   ```
 
-2. Install dependencies
-   bash
+2. **Install dependencies**
+
+   ```bash
    npm install
-   
+   ```
 
-3. Start the development server
-   bash
+3. **Start the development server**
+
+   ```bash
    npm run dev
-   
+   ```
 
-4. Open your browser and visit http://localhost:5173
+4. **Open your browser and visit**
+
+   ```
+   http://localhost:5173
+   ```
 
 ## Project Structure
 
