@@ -36,7 +36,10 @@ function App() {
   })
 
   const [isSubmitted, setIsSubmitted] = useState(false)
+<<<<<<< HEAD
   const [showLicenseForm, setShowLicenseForm] = useState(false)
+=======
+>>>>>>> b538b8edb8f11803c0e292127dce1ca8e39d53fa
 
   const handleSubmit = (e) => {
     e.preventDefault()
