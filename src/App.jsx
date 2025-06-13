@@ -36,7 +36,6 @@ function App() {
   })
 
   const [isSubmitted, setIsSubmitted] = useState(false)
-
   const [showLicenseForm, setShowLicenseForm] = useState(false)
 
 
