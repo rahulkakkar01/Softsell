@@ -1,4 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from './firebase';
+import AuthPage from './pages/AuthPage';
+import AccountPage from './pages/AccountPage'; // <-- Add this import
+import LicenseForm from './components/LicenseForm'
 import './styles/globals.css'
 import { Button } from './components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './components/ui/card'
@@ -10,6 +15,18 @@ import { ThemeToggle } from './components/theme-toggle'
 import { ChatBot } from './components/chat-bot' // Import the chat bot component
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [showAccount, setShowAccount] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,6 +34,9 @@ function App() {
     licenseType: '',
     message: ''
   })
+
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [showLicenseForm, setShowLicenseForm] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -30,6 +50,10 @@ function App() {
       return
     }
     console.log('Form submitted:', formData)
+    
+    // Set submitted state to true to show thank you message
+    setIsSubmitted(true)
+    
     // Reset form
     setFormData({
       name: '',
@@ -38,6 +62,11 @@ function App() {
       licenseType: '',
       message: ''
     })
+    
+    // Optionally reset the form back to normal after a few seconds
+    setTimeout(() => {
+      setIsSubmitted(false)
+    }, 5000)
   }
 
   const handleChange = (e) => {
@@ -54,13 +83,24 @@ function App() {
     })
   }
 
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!user) {
+    return <AuthPage />;
+  }
+
   return (
     <ThemeProvider defaultTheme="light">
       <div className="min-h-screen bg-background font-sans">
         {/* Navigation */}
         <nav className="py-4 px-6 shadow-sm bg-background/90 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto flex justify-between items-center">
-            <div className="text-2xl font-bold text-primary">SoftSell</div>
+            <div className="flex items-center">
+              {/* Add the text logo back */}
+              <div className="text-2xl font-bold text-primary">SoftSell</div>
+            </div>
             <div className="hidden md:flex space-x-6">
               <a href="#how-it-works" className="text-foreground hover:text-primary transition-colors">How it Works</a>
               <a href="#why-us" className="text-foreground hover:text-primary transition-colors">Why Choose Us</a>
@@ -69,16 +109,58 @@ function App() {
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <Button size="sm">
+              <Button size="sm" onClick={() => setShowLicenseForm(true)}>
                 Get Started
               </Button>
+              {/* Account Avatar */}
+              <button
+                className="ml-2 rounded-full border-2 border-primary w-10 h-10 flex items-center justify-center bg-white"
+                onClick={() => setShowAccount(true)}
+                title="Account"
+              >
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full" />
+                ) : (
+                  <span className="text-primary font-bold text-lg">
+                    {user.displayName
+                      ? user.displayName[0].toUpperCase()
+                      : user.email[0].toUpperCase()}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
         </nav>
 
+        {/* Account Page Modal */}
+        {showAccount && (
+          <AccountPage user={user} onClose={() => setShowAccount(false)} />
+        )}
+
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center hero-bg">
-          <div className="container mx-auto px-4 text-center hero-content">
+          {/* Enhanced background effect for both light and dark themes */}
+          <div className="absolute inset-0 overflow-hidden z-0">
+            <div className="absolute top-0 left-[10%] w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-[15%] w-96 h-96 bg-primary/25 rounded-full blur-3xl"></div>
+            <div className="absolute top-[30%] right-[5%] w-64 h-64 bg-secondary/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-[20%] left-[20%] w-80 h-80 bg-primary/15 rounded-full blur-3xl"></div>
+            
+            {/* Additional elements for more visual interest */}
+            <div className="absolute top-[50%] left-[40%] w-60 h-60 bg-accent/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-[15%] left-[30%] w-40 h-40 bg-secondary/15 rounded-full blur-2xl"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 text-center hero-content relative z-10">
+            {/* Keep the logo in the hero section too */}
+            <div className="flex justify-center mb-8">
+              <img 
+                src={import.meta.env.BASE_URL + "logo.png"} 
+                alt="SoftSell Logo" 
+                className="h-56 w-auto"
+              />
+            </div>
+            
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Transform Your Software <span className="text-primary">Licenses</span> into Cash
             </h1>
@@ -86,7 +168,7 @@ function App() {
               SoftSell helps you monetize your unused software licenses quickly and securely. 
               Get the best value for your digital assets.
             </p>
-            <Button size="lg" className="submit-button">
+            <Button size="lg" className="submit-button" onClick={() => setShowLicenseForm(true)}>
               Sell My Licenses
             </Button>
             
@@ -283,73 +365,87 @@ function App() {
                 <CardDescription>Tell us about your software licenses and how we can help.</CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                {isSubmitted ? (
+                  <div className="py-8 text-center space-y-4 animate-fadeIn">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-scaleIn">
+                      <svg className="w-8 h-8 text-primary animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-primary animate-slideUp">Thank You!</h3>
+                    <p className="text-muted-foreground animate-slideUp animation-delay-100">
+                      We appreciate you connecting with us. Our team will get back to you within 24 hours.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label htmlFor="name" className="text-sm font-medium">Name</label>
+                        <Input
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="email" className="text-sm font-medium">Email</label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-2">
-                      <label htmlFor="name" className="text-sm font-medium">Name</label>
+                      <label htmlFor="company" className="text-sm font-medium">Company</label>
                       <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="company"
+                        name="company"
+                        value={formData.company}
                         onChange={handleChange}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-sm font-medium">Email</label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
+                      <label htmlFor="licenseType" className="text-sm font-medium">License Type</label>
+                      <Select 
+                        value={formData.licenseType} 
+                        onValueChange={handleSelectChange}
+                        required
+                      >
+                        <SelectTrigger id="licenseType">
+                          <SelectValue placeholder="Select a license type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="microsoft">Microsoft</SelectItem>
+                          <SelectItem value="adobe">Adobe</SelectItem>
+                          <SelectItem value="autodesk">Autodesk</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="message" className="text-sm font-medium">Message</label>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
                         onChange={handleChange}
+                        rows="4"
                         required
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="company" className="text-sm font-medium">Company</label>
-                    <Input
-                      id="company"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="licenseType" className="text-sm font-medium">License Type</label>
-                    <Select 
-                      value={formData.licenseType} 
-                      onValueChange={handleSelectChange}
-                      required
-                    >
-                      <SelectTrigger id="licenseType">
-                        <SelectValue placeholder="Select a license type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="microsoft">Microsoft</SelectItem>
-                        <SelectItem value="adobe">Adobe</SelectItem>
-                        <SelectItem value="autodesk">Autodesk</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium">Message</label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows="4"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full submit-button">
-                    Submit
-                  </Button>
-                </form>
+                    <Button type="submit" className="w-full submit-button">
+                      Submit
+                    </Button>
+                  </form>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -360,7 +456,14 @@ function App() {
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-8">
               <div>
-                <h3 className="text-xl font-bold mb-4">SoftSell</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <img 
+                    src="/logo.png" 
+                    alt="SoftSell Logo" 
+                    className="h-8 mr-2 filter brightness-200" 
+                  />
+                  SoftSell
+                </h3>
                 <p className="text-background/80 mb-4">
                   The easiest way to sell your unused software licenses for the best value.
                 </p>
@@ -413,7 +516,12 @@ function App() {
           </div>
         </footer>
 
-        {/* Add Chat Bot Component */}
+        {/* License Form Modal */}
+        {showLicenseForm && (
+          <LicenseForm onClose={() => setShowLicenseForm(false)} />
+        )}
+
+        {/* ChatBot */}
         <ChatBot />
       </div>
     </ThemeProvider>
