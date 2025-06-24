@@ -29,27 +29,34 @@ A modern, responsive landing page for SoftSell - a platform that helps businesse
 
 ### Installation
 
-1. Clone the repository
-   bash
-   git clone https://github.com/yourusername/softsell-site.git
-   cd softsell-site
-   
+1. **Clone the repository**
 
-2. Install dependencies
-   bash
+   ```bash
+   git clone https://github.com/rahulkakkar01/Softsell.git
+   cd Softsell
+   ```
+
+2. **Install dependencies**
+
+   ```bash
    npm install
-   
+   ```
 
-3. Start the development server
-   bash
+3. **Start the development server**
+
+   ```bash
    npm run dev
-   
+   ```
 
-4. Open your browser and visit http://localhost:5173
+4. **Open your browser and visit**
+
+   ```
+   http://localhost:5173
+   ```
 
 ## Project Structure
 
-
+```
 softsell-site/
 ├── public/              # Static assets
 ├── src/
@@ -64,7 +71,7 @@ softsell-site/
 ├── index.html           # HTML template
 ├── tailwind.config.js   # Tailwind CSS configuration
 └── vite.config.js       # Vite configuration
-
+```
 
 ## Customization
 
@@ -107,4 +114,4 @@ This will generate optimized files in the dist directory, which you can deploy t
 ## Contact
 - Time taken to complete this project was 14 to 15 hr
 - Rahul Kakkar - rahulkakkar@example.com
-- Project Link: [https://github.com/yourusername/softsell-site](https://github.com/yourusername/softsell-site) give it in the form i can directly add
+- Project Link: [https://softsell-taupe.vercel.app/](https://softsell-taupe.vercel.app/)
